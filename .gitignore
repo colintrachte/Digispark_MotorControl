@@ -1,3 +1,24 @@
+# PlatformIO generated folders and files
+.pio/
+.pioenvs/
+.piolibdeps/
+.vscode/
+
+# Unit test results
+.pio/test/
+
+# CMake generated files
+CMakeListsPrivate.txt
+CMakeFiles/
+CMakeCache.txt
+
+# Local configuration (passwords, private tokens)
+*.local
+
+# System files
+.DS_Store
+Thumbs.db
+
 # Prerequisites
 *.d
 

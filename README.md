@@ -73,24 +73,98 @@ DRV8833:
 
 ---
 
-## Quick Start
+## Setup Instructions
 
 ### Prerequisites
 
 - [VS Code](https://code.visualstudio.com/) + [PlatformIO IDE](https://platformio.org/install/ide?install=vscode)
 - [Git](https://git-scm.com/)
 
-### Clone & Build
+## PlatformIO doesn't work out of the box with Windows 11. You have to update the micronucleus tool.
 
+PlatformIO's bundled tool-micronucleus (v1.250.210222) ships a Windows binary that commonly crashes on modern Windows 10/11 due to missing Visual C++ runtime DLLs or a bitness mismatch.
+Fix — replace the bundled binary with the official one:
+
+Download the latest micronucleus Windows binary from the official releases page https://github.com/micronucleus/micronucleus/releases — grab micronucleus-cli.exe from the latest release assets (not the source zip).
+Find PlatformIO's bundled copy. It will be at something like:
+
+%USERPROFILE%\.platformio\packages\tool-micronucleus\micronucleus.exe
+
+Rename the existing one as a backup:
+
+micronucleus.exe  →  micronucleus.exe.bak
+
+Drop the downloaded micronucleus-cli.exe in that folder and rename it to micronucleus.exe.
+Run pio run -t upload again — plug in on the prompt as normal.
+
+Also confirm the driver is installed correctly while you're at it. Open Device Manager while the Digispark is plugged in and look for it under "libusb-win32 devices" or "Digispark Bootloader". If it shows up under "Unknown devices" or "HID devices" instead, the Digistump driver install didn't take — re-run Install Drivers.exe as Administrator.
+The fact that it found the upload protocol and got to the micronucleus call means the platformio.ini is correct and the build is clean. Once the binary is swapped this should flash on the first try.
+
+## Flashing with PlatformIO
+ 
+The Digispark bootloader requires you to plug in the USB **after** the upload process starts. PlatformIO will prompt you. The Digispark does not use a standard serial bootloader. It uses **micronucleus**, a USB HID bootloader that only activates for the first ~5 seconds after power-on. The flash sequence is therefore different from every other Arduino-compatible board.
+ 
+### 1. Install the USB driver (Windows only)
+ 
+On Windows, the Digispark requires the **Digistump drivers** — it will not enumerate correctly with the default HID driver.
+ 
+Download and run the installer from the [Digistump releases page](https://github.com/digistump/DigistumpArduino/releases) (`Digistump.Drivers.zip` → run `Install Drivers.exe`).
+ 
+macOS and Linux do not need a driver. On Linux you may need a udev rule:
+ 
 ```bash
-git clone <this-repo>
-cd <this-repo>
-
-# Build and flash (plug in Digispark when PlatformIO prompts)
+# /etc/udev/rules.d/49-micronucleus.rules
+SUBSYSTEMS=="usb", ATTRS{idVendor}=="16d0", ATTRS{idProduct}=="0753", MODE="0660", GROUP="plugdev"
+```
+ 
+Then reload: `sudo udevadm control --reload-rules && sudo udevadm trigger`
+ 
+### 2. Start the upload — board unplugged
+ 
+Run the upload command first, **before** plugging in the board:
+ 
+```bash
 pio run -t upload
 ```
-
-The Digispark bootloader requires you to plug in the USB **after** the upload process starts. PlatformIO will prompt you.
+ 
+PlatformIO will build the firmware, then pause with a message like:
+ 
+```
+Connecting to USB device...
+Please plug in the device (will time out in 60 seconds)...
+```
+ 
+### 3. Plug in the Digispark
+ 
+Only plug in the USB **after** you see the above prompt. The micronucleus bootloader activates on power-up and listens for about 5 seconds. PlatformIO will detect it and flash automatically.
+ 
+```
+> Device is found!
+connecting: 40% complete
+> Available space for user applications: 6012 bytes
+> Suggested sleep time between sending pages: 7ms
+programming: 60% complete
+reading and validating: 80% complete
+> Uploaded. Outro-ing. Bye.
+```
+ 
+### 4. Board resets and runs
+ 
+After flashing completes the board resets automatically and your firmware starts immediately — no button press needed.
+ 
+### Reflashing
+ 
+Unplug the board, run `pio run -t upload` again, then plug back in when prompted. You do not need to hold any button.
+ 
+### Troubleshooting
+ 
+**"Device not found" timeout** — You either plugged in too early (before the prompt) or too late (after the 5-second bootloader window). Unplug, wait, and try again.
+ 
+**Windows: device shows as unknown in Device Manager** — Drivers are not installed. See step 1.
+ 
+**Linux: permission denied** — udev rule is missing or not reloaded. See step 1.
+ 
+**Upload succeeds but firmware doesn't run** — The Digispark has a USB initialisation delay of about 5 seconds on boot (the micronucleus bootloader waits for a connection attempt before handing off). This is normal. Your firmware starts after that delay whenever the board powers up without a flash attempt.
 
 ### Tuning
 

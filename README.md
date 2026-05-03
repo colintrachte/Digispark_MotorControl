@@ -80,7 +80,7 @@ DRV8833:
 - [VS Code](https://code.visualstudio.com/) + [PlatformIO IDE](https://platformio.org/install/ide?install=vscode)
 - [Git](https://git-scm.com/)
 
-## PlatformIO doesn't work out of the box with Windows 11. You have to update the micronucleus tool.
+## PlatformIO doesn't work out of the box with Windows 11. You have to update the micronucleus tool and install the drivers, then restart your PC.
 
 PlatformIO's bundled tool-micronucleus (v1.250.210222) ships a Windows binary that commonly crashes on modern Windows 10/11 due to missing Visual C++ runtime DLLs or a bitness mismatch.
 Fix — replace the bundled binary with the official one:

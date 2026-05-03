@@ -1,6 +1,6 @@
 # ATtiny85 DRV8833 Motor Driver
 
-Minimal pot-controlled DC motor firmware for the Digispark (ATtiny85). Turn the knob, motor spins. Click the pot off, power cuts. No app, no cloud, no sleep state to manage.
+Minimal potentiometer-controlled DC motor firmware for the Digispark (ATtiny85). Turn the knob, motor spins. Click the pot off, power cuts. No app, no cloud, no sleep state to manage.
 
 [![PlatformIO](https://img.shields.io/badge/PlatformIO-arduino-orange.svg)](https://platformio.org/)
 [![MCU](https://img.shields.io/badge/MCU-ATtiny85-blue.svg)](https://www.microchip.com/en-us/product/attiny85)
@@ -38,7 +38,7 @@ Minimal pot-controlled DC motor firmware for the Digispark (ATtiny85). Turn the 
 
 ## How It Works
 
-The pot wiper drives the ADC. A small deadzone at the bottom (`POT_DEAD_LOW`) ensures the motor stops cleanly before the integral switch clicks off. A matching deadzone at the top (`POT_DEAD_HIGH`) ensures full speed is reachable even if the pot doesn't hit a perfect 1023. Between those bounds, ADC counts map linearly to PWM duty cycle 1–254.
+The potentiometer drives the ADC. A small deadzone at the bottom (`POT_DEAD_LOW`) ensures the motor stops cleanly before the integral switch clicks off. A matching deadzone at the top (`POT_DEAD_HIGH`) ensures full speed is reachable even if the pot doesn't hit a perfect 1023. Between those bounds, ADC counts map linearly to PWM duty cycle 1–254.
 
 PWM runs at **31.25 kHz** (Timer0, Fast PWM, prescaler = 1 on 8 MHz clock) — above audible range, no motor whine.
 
@@ -55,7 +55,7 @@ Li-ion (+) ──┬────────────────────
              │
          Digispark GND ───── DRV8833 GND ───── Li-ion (–)
 
-Pot:
+Potentiometer:
   CCW end  → GND
   Wiper    → P2  (+ 100 nF cap to GND)
   CW end   → 5V

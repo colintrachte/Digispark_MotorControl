@@ -46,7 +46,7 @@
 // ---------------------------------------------------------------------------
 // ADC counts (0-1023) below this are treated as "off".
 // Raise if motor creeps at minimum pot position.
-#define POT_DEAD_LOW   12
+#define POT_DEAD_LOW   100
 
 // ADC counts above this are treated as "full speed".
 // Prevents a hard stop at top of travel if pot doesn't quite reach 1023.

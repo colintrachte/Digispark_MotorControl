@@ -64,7 +64,7 @@ Potentiometer:
 DRV8833:
   AIN1 → P0
   AIN2 → P1
-  AOUT1/AOUT2 → Motor (observe polarity for forward direction)
+  AOUT1/AOUT2 → Motor (in this case, OUT 1 is Positive, OUT 2 is negative)
 ```
 
 > **Important:** Connect Li-ion (+) to the Digispark **5V pin**, not VIN. The VIN pin goes through the onboard regulator, which wastes power and drops voltage at the motor.
